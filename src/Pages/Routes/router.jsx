@@ -5,6 +5,7 @@ import Register from "../Register/Register";
 import ForgotPassword from "../ForgorPassword/ForgotPassword";
 import OTP from "../OTP/OTP";
 import Test from "../Test/Test";
+import Home from "../Home/home";
 
 const router = createBrowserRouter([
   {
@@ -16,6 +17,7 @@ const router = createBrowserRouter([
       { path: "/ForgotPassword", element: <ForgotPassword /> },
       { path:"/otp", element: <OTP />},
       { path:"/test", element: <Test />},
+      { path:"/home", element: <Home />},
 
     ],
   },

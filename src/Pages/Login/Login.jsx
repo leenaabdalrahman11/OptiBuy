@@ -1,59 +1,78 @@
-import React, { use, useState } from 'react'
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-
 export default function Login() {
-  const [email,setEmail] = useState("");
-  const [password,setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  
 
-  const handleSubmit = (e) =>{
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if(email === "leena@gmail.com" && password ==="123"){
-      alert("Successful Login");
-    }else{
-      alert("Faild Login");
+    setLoading(true);
+
+    try {
+      const response = await fetch("http://localhost:3000/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+      setLoading(false);
+
+      if (response.ok) {
+        alert(" Login Successful!");
+        localStorage.setItem("userToken", data.token); 
+        navigate("/home"); 
+      } else {
+        alert(` ${data.message || "Login failed"}`);
+      }
+    } catch (error) {
+      setLoading(false);
+      alert(" Error connecting to server");
+      console.error(error);
     }
-  }
+  };
+
   return (
-    <>
-    <div className=''>
+    <div>
       <form onSubmit={handleSubmit}>
-        <h2> Login </h2>
+        <h2>Login</h2>
+
         <div>
-          <div>
-             <label>email</label>
-             <input 
-              type='email'
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-             />            
-          </div>
-          <div>
-            <label>Password</label>
-            <input
-              type='password'
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-                    <button
+          <label>Email</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
+
+        <div>
+          <label>Password</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+
+        <div>
+          <button
             type="button"
-            className={''}
-            onClick={() => navigate('/ForgotPassword')}
+            onClick={() => navigate("/ForgotPassword")}
           >
             Forgot Password?
           </button>
-
-          <button type='submit'>Login</button>
-
         </div>
+
+        <button type="submit" disabled={loading}>
+          {loading ? "Logging in..." : "Login"}
+        </button>
       </form>
-
     </div>
-
-      
-    </>
-  )
+  );
 }
